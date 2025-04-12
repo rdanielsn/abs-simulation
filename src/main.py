@@ -5,6 +5,7 @@ from abs_simulation.vehicle_model import r, slip, dv_vehicle
 from abs_simulation.braking_model import T_b, friction_coeff, brake_force, domega_wheel
 
 # init conditions
+dt = 1e-3
 v_init = 30      
 omega_init = v_init / r  
 dt = 1e-3         
@@ -31,8 +32,8 @@ for i in range(1, len(time)):
     mu = friction_coeff(lambda_)
     F_brake = brake_force(mu)
     
-    v_new = v + dv_vehicle(F_brake)
-    omega_new = omega + domega_wheel(F_brake)
+    v_new = v + dv_vehicle(F_brake, dt)
+    omega_new = omega + domega_wheel(F_brake, dt)
 
     # ensure non negative value
     v_new = max(v_new, 0)

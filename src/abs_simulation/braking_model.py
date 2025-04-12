@@ -10,13 +10,11 @@ g = 9.81
 T_b = 1500  
 I = 1.5        
 
-dt = 1e-3   
-
 def friction_coeff(lambda_):
     return c1 * (1 - np.exp(-c2 * lambda_)) - c3 * lambda_
 
 def brake_force(mu):
     return mu * m * g
 
-def domega_wheel(F_brake):
+def domega_wheel(F_brake, dt):
     return (-T_b + F_brake * r) / I * dt
