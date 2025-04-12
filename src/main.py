@@ -1,16 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Burckhardt model for dry asphalt
-c1 = 1.2801
-c2 = 23.99
-c3 = 0.52
-
-g = 9.81          
-m = 400        
-r = 0.3          
-T_b = 1500        
-I = 1.5           
+from abs_simulation.vehicle_model import r, slip, dv_vehicle
+from abs_simulation.braking_model import T_b, friction_coeff, brake_force, domega_wheel
 
 # init conditions
 v_init = 30      
@@ -18,21 +10,6 @@ omega_init = v_init / r
 dt = 1e-3         
 time_span = 5
 time = np.arange(0, time_span, dt)
-
-def slip(v_vehicle, omega_wheel):
-    return (v_vehicle - omega_wheel * r) / max(v_vehicle, 1e-3)
-
-def friction_coeff(lambda_):
-    return c1 * (1 - np.exp(-c2 * lambda_)) - c3 * lambda_
-
-def brake_force(mu):
-    return mu * m * g
-
-def dv_vehicle(F_brake):
-    return (-F_brake / m) * dt
-
-def domega_wheel(F_brake):
-    return (-T_b + F_brake * r) / I * dt
 
 v_log = [v_init]
 omega_log = [omega_init]
