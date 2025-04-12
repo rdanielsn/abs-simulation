@@ -2,7 +2,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from abs_simulation.vehicle_model import r, slip, dv_vehicle
-from abs_simulation.braking_model import T_b, friction_coeff, brake_force, domega_wheel
+from abs_simulation.braking_model import friction_coeff, brake_force, domega_wheel
+from abs_simulation.controllers.threshold_controller import ThresholdController
+
+# threshold params
+lambda_low = 0.15
+lambda_high = 0.20
+T_max = 1500
 
 # init conditions
 dt = 1e-3
@@ -12,12 +18,14 @@ dt = 1e-3
 time_span = 5
 time = np.arange(0, time_span, dt)
 
+threshold_controller = ThresholdController(lambda_low, lambda_high, T_max)
+
 v_log = [v_init]
 omega_log = [omega_init]
 lambda_log = [slip(v_init, omega_init)]
 mu_log = [friction_coeff(lambda_log[-1])]
 F_brake_log = [brake_force(mu_log[-1])]
-T_b_log = [T_b]
+T_b_log = [T_max]
 position_log = [0]
 
 for i in range(1, len(time)):
@@ -29,11 +37,13 @@ for i in range(1, len(time)):
         break
     
     lambda_ = slip(v, omega)
+    
+    T_b = threshold_controller.calculate_brake_torque(lambda_)
     mu = friction_coeff(lambda_)
     F_brake = brake_force(mu)
     
     v_new = v + dv_vehicle(F_brake, dt)
-    omega_new = omega + domega_wheel(F_brake, dt)
+    omega_new = omega + domega_wheel(F_brake, T_b, dt)
 
     # ensure non negative value
     v_new = max(v_new, 0)

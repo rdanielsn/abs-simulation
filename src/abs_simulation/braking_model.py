@@ -7,7 +7,6 @@ c2 = 23.99
 c3 = 0.52
 
 g = 9.81 
-T_b = 1500  
 I = 1.5        
 
 def friction_coeff(lambda_):
@@ -16,5 +15,5 @@ def friction_coeff(lambda_):
 def brake_force(mu):
     return mu * m * g
 
-def domega_wheel(F_brake, dt):
+def domega_wheel(F_brake, T_b, dt):
     return (-T_b + F_brake * r) / I * dt
